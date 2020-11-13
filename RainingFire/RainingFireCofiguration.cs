@@ -13,10 +13,33 @@ namespace RainingFire
             string setting = File.ReadAllText(BasePath.Name + "Modules/RainingFire/setting/RainingFireSetting.json");
             JObject jsondata = JObject.Parse(setting);
 
+            RainingFireTime fireTime = RainingFireTime.getInstance();
+            RainingFireBattle battle = RainingFireBattle.getInstance();
+
             RainingFireCofiguration.rainingFireSwitch = (bool)jsondata["rainingfireswitch"];
-            RainingFireTime.rainingfirestarttime = (int)jsondata["rainingfirestarttime"] - 1;
-            RainingFireTime.rainingfireendtime = (int)jsondata["rainingfireendtime"] - 1;
-            RainingFireTime.rainingfireburningtime = (int)jsondata["rainingfireburningtime"];
+            fireTime.rainingfirestarttime = (int)jsondata["rainingfirestarttime"] - 1;
+            fireTime.rainingfireendtime = (int)jsondata["rainingfireendtime"] - 1;
+            fireTime.rainingfireburningtime = (int)jsondata["rainingfireburningtime"];
+
+            JArray battletype = (JArray)jsondata["rainingfirebattletype"];
+            foreach(JObject array in battletype.Children())
+            {
+                switch((string)array["type"])
+                {
+                    case "battle":
+                        battle.battle = (bool)array["flag"];
+                        break;
+                    case "duel":
+                        battle.duel = (bool)array["flag"];
+                        break;
+                    case "stealth":
+                        battle.stealth = (bool)array["flag"];
+                        break;
+                    case "tournament":
+                        battle.tournament = (bool)array["flag"];
+                        break;
+                }
+            }
 
             foreach (JObject weaponsetlist in jsondata["rainingfireweaponsetting"])
             {
@@ -32,28 +55,28 @@ namespace RainingFire
             {
                 case "arrow":
                     rainingFireWeapon.Arrow = (bool)data["flag"];
-                    RainingFireLight.Arrow.Intensity = (float)data["intensity"];
-                    RainingFireLight.Arrow.Radius = (float)data["radius"];
+                    rainingFireLight.Arrow.Intensity = (float)data["intensity"];
+                    rainingFireLight.Arrow.Radius = (float)data["radius"];
                     break;
                 case "bolt":
                     rainingFireWeapon.Bolt = (bool)data["flag"];
-                    RainingFireLight.Bolt.Intensity = (float)data["intensity"];
-                    RainingFireLight.Bolt.Radius = (float)data["radius"];
+                    rainingFireLight.Bolt.Intensity = (float)data["intensity"];
+                    rainingFireLight.Bolt.Radius = (float)data["radius"];
                     break;
                 case "throwingaxe":
                     rainingFireWeapon.ThrowingAxe = (bool)data["flag"];
-                    RainingFireLight.ThrowingAxe.Intensity = (float)data["intensity"];
-                    RainingFireLight.ThrowingAxe.Radius = (float)data["radius"];
+                    rainingFireLight.ThrowingAxe.Intensity = (float)data["intensity"];
+                    rainingFireLight.ThrowingAxe.Radius = (float)data["radius"];
                     break;
                 case "throwingknife":
                     rainingFireWeapon.ThrowingKnife = (bool)data["flag"];
-                    RainingFireLight.ThrowingKnife.Intensity = (float)data["intensity"];
-                    RainingFireLight.ThrowingKnife.Radius = (float)data["radius"];
+                    rainingFireLight.ThrowingKnife.Intensity = (float)data["intensity"];
+                    rainingFireLight.ThrowingKnife.Radius = (float)data["radius"];
                     break;
                 case "javelin":
                     rainingFireWeapon.Javelin = (bool)data["flag"];
-                    RainingFireLight.Javelin.Intensity = (float)data["intensity"];
-                    RainingFireLight.Javelin.Radius = (float)data["radius"];
+                    rainingFireLight.Javelin.Intensity = (float)data["intensity"];
+                    rainingFireLight.Javelin.Radius = (float)data["radius"];
                     break;
             }
             

@@ -40,16 +40,46 @@ namespace RainingFire
 		//		sl.Exit();
 		//	}
 		//}
+		public bool GetCurrentCombatType()
+        {
+			MissionMode currentMode = Mission.Current.Mode;
+			RainingFireBattle battle = RainingFireBattle.getInstance();
+			bool rval = false;
+
+			switch(currentMode)
+            {
+				case MissionMode.Battle:
+					if(battle.battle)
+						rval = true;
+					break;
+				case MissionMode.Duel:
+					if(battle.duel)
+						rval = true;
+					break;
+				case MissionMode.Stealth:
+					if(battle.stealth)
+						rval = true;
+					break;
+				case MissionMode.Tournament:
+					if(battle.tournament)
+						rval = true;
+					break;
+				default:
+					rval = false;
+					break;
+			}
+			return rval;
+        }
 
 		public override void OnAgentShootMissile(Agent shooterAgent, EquipmentIndex weaponIndex, Vec3 position, Vec3 velocity, Mat3 orientation, bool hasRigidBody, int forcedMissileIndex)
         {
 			RainingFireWeapon rainingFireWeapon = RainingFireWeapon.getInstance();
-			RainingFireLight rainingFireLight = RainingFireLight.getInstance();
 			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
+			RainingFireLight rainingFireLight = RainingFireLight.getInstance();
 
 			
 			//InformationManager.DisplayMessage(new InformationMessage("Current time is " + Campaign.CurrentTime%24f));
-			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime))
+			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime) && GetCurrentCombatType())
 			{
 				WeaponClass weapon = shooterAgent.Equipment[weaponIndex].CurrentUsageItem.WeaponClass;
 				if (rainingFireWeapon.rainingfireCheckWeapon(weapon))
@@ -62,24 +92,24 @@ namespace RainingFire
 						switch(weapon)
 						{
 							case WeaponClass.Bow:
-								light.Intensity = RainingFireLight.Arrow.Intensity;
-								light.Radius	= RainingFireLight.Arrow.Radius;
+								light.Intensity = rainingFireLight.Arrow.Intensity;
+								light.Radius	= rainingFireLight.Arrow.Radius;
 								break;
 							case WeaponClass.Crossbow:
-								light.Intensity = RainingFireLight.Bolt.Intensity;
-								light.Radius	= RainingFireLight.Bolt.Radius;
+								light.Intensity = rainingFireLight.Bolt.Intensity;
+								light.Radius	= rainingFireLight.Bolt.Radius;
 								break;
 							case WeaponClass.ThrowingAxe:
-								light.Intensity = RainingFireLight.ThrowingAxe.Intensity;
-								light.Radius	= RainingFireLight.ThrowingAxe.Radius;
+								light.Intensity = rainingFireLight.ThrowingAxe.Intensity;
+								light.Radius	= rainingFireLight.ThrowingAxe.Radius;
 								break;
 							case WeaponClass.ThrowingKnife:
-								light.Intensity = RainingFireLight.ThrowingKnife.Intensity;
-								light.Radius	= RainingFireLight.ThrowingKnife.Radius;
+								light.Intensity = rainingFireLight.ThrowingKnife.Intensity;
+								light.Radius	= rainingFireLight.ThrowingKnife.Radius;
 								break;
 							case WeaponClass.Javelin:
-								light.Intensity = RainingFireLight.Javelin.Intensity;
-								light.Radius	= RainingFireLight.Javelin.Radius;
+								light.Intensity = rainingFireLight.Javelin.Intensity;
+								light.Radius	= rainingFireLight.Javelin.Radius;
 								break;
 							default:
 								light.Intensity = 10f;
@@ -101,7 +131,7 @@ namespace RainingFire
 			bool splock = false;
 			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
 
-			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime))
+			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime) && GetCurrentCombatType())
 			{
 				base.OnMissileCollisionReaction(collisionReaction, attackerAgent, attachedAgent, attachedBoneIndex);
 
@@ -137,6 +167,6 @@ namespace RainingFire
 			}
 		}
 
-		private List<RainingFireProjectile> projectiles = new List<RainingFireProjectile>();
+		//private List<RainingFireProjectile> projectiles = new List<RainingFireProjectile>();
     }
 }

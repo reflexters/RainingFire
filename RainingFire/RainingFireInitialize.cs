@@ -26,6 +26,7 @@ namespace RainingFire
             RainingFireWeapon.getInstance();
             RainingFireLight.getInstance();
             RainingFireTime.getInstance();
+            RainingFireBattle.getInstance();
             RainingFireCofiguration configuration = new RainingFireCofiguration();
             configuration.parsingJSON();
         }
@@ -33,7 +34,7 @@ namespace RainingFire
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
             base.OnBeforeInitialModuleScreenSetAsRoot();
-            InformationManager.DisplayMessage(new InformationMessage("RainingFire v1.0.1 is successfully loaded."));
+            InformationManager.DisplayMessage(new InformationMessage("RainingFire v1.0.2 is successfully loaded."));
         }
     }
 }

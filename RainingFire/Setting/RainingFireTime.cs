@@ -39,9 +39,9 @@ namespace RainingFire
             return rval;
         }
 
-        public static int rainingfirestarttime;
-        public static int rainingfireendtime;
-        public static int rainingfireburningtime;
+        public int rainingfirestarttime;
+        public int rainingfireendtime;
+        public int rainingfireburningtime;
 
         private static RainingFireTime instance;
     }

@@ -23,11 +23,11 @@ namespace RainingFire.Setting
             return instance;
         }
 
-        public static Light Arrow { get; set; }
-        public static Light Bolt { get; set; }
-        public static Light ThrowingAxe { get; set; }
-        public static Light ThrowingKnife { get; set; }
-        public static Light Javelin { get; set; }
+        public Light Arrow { get; set; }
+        public Light Bolt { get; set; }
+        public Light ThrowingAxe { get; set; }
+        public Light ThrowingKnife { get; set; }
+        public Light Javelin { get; set; }
         private static RainingFireLight instance;
     }
 }
