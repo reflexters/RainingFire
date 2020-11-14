@@ -40,6 +40,14 @@ namespace RainingFire
 		//		sl.Exit();
 		//	}
 		//}
+
+		public bool GetRainingFireAvailable()
+        {
+			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
+			float currentTime = Mission.Current.Scene.TimeOfDay;
+
+			return RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(currentTime) && GetCurrentCombatType();
+		}
 		public bool GetCurrentCombatType()
         {
 			MissionMode currentMode = Mission.Current.Mode;
@@ -74,12 +82,11 @@ namespace RainingFire
 		public override void OnAgentShootMissile(Agent shooterAgent, EquipmentIndex weaponIndex, Vec3 position, Vec3 velocity, Mat3 orientation, bool hasRigidBody, int forcedMissileIndex)
         {
 			RainingFireWeapon rainingFireWeapon = RainingFireWeapon.getInstance();
-			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
 			RainingFireLight rainingFireLight = RainingFireLight.getInstance();
 
 			
 			//InformationManager.DisplayMessage(new InformationMessage("Current time is " + Campaign.CurrentTime%24f));
-			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime) && GetCurrentCombatType())
+			if (GetRainingFireAvailable())
 			{
 				WeaponClass weapon = shooterAgent.Equipment[weaponIndex].CurrentUsageItem.WeaponClass;
 				if (rainingFireWeapon.rainingfireCheckWeapon(weapon))
@@ -129,9 +136,8 @@ namespace RainingFire
         {
 			SpinLock sl = new SpinLock();
 			bool splock = false;
-			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
-
-			if (RainingFireCofiguration.rainingFireSwitch && rainingFireTime.rainingfireCheckTime(Campaign.CurrentTime) && GetCurrentCombatType())
+			
+			if (GetRainingFireAvailable())
 			{
 				base.OnMissileCollisionReaction(collisionReaction, attackerAgent, attachedAgent, attachedBoneIndex);
 

@@ -19,7 +19,6 @@ namespace RainingFire
         public bool rainingfireCheckTime(float time)
         {
             bool rval = false;
-            int currenttime = (int)time % 24;
             int timediff = rainingfirestarttime - rainingfireendtime;
             if (timediff == 0)
                 rval = true;
@@ -27,12 +26,12 @@ namespace RainingFire
             {
                 if(timediff < 0)
                 {
-                    if (currenttime >= rainingfirestarttime && currenttime <= rainingfireendtime)
+                    if (time >= rainingfirestarttime && time <= rainingfireendtime)
                         rval = true;
                 }
                 else if(timediff > 0)
                 {
-                    if (!(currenttime < rainingfirestarttime && currenttime > rainingfireendtime))
+                    if (!(time < rainingfirestarttime && time > rainingfireendtime))
                         rval = true;
                 }
             }
