@@ -1,47 +1,101 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text.RegularExpressions;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.Library;
 using TaleWorlds.Engine;
-using TaleWorlds.CampaignSystem;
+using TaleWorlds.Localization;
 using RainingFire.Setting;
 using RainingFire.Container;
+
 
 
 namespace RainingFire
 {
     class RainingFireAttachFire : MissionLogic
     {
-  //      public override void OnMissionTick(float dt)
-  //      {
-  //          base.OnMissionTick(dt);
-		//	SpinLock sl = new SpinLock();
-		//	bool splock = false;
-		//	RainingFireTime rainingFireTime = RainingFireTime.getInstance();
+        public override void OnMissionTick(float dt)
+        {
+            base.OnMissionTick(dt);
+			List<Agent> deadagents = new List<Agent>();
 
-		//	if (RainingFireCofiguration.rainingFireSwitch)
-		//	{
-		//		sl.Enter(ref splock);
-		//		for (int i = 0 ; i < projectiles.Count ; i++)
-		//		{
-		//			RainingFireProjectile rainingFireProjectile = projectiles[i];
-		//			if (rainingFireProjectile.timer.Check(true))
-		//			{
-		//				rainingFireProjectile.missile.Entity.RemoveAllParticleSystems();
-		//				Light light = rainingFireProjectile.missile.Entity.GetLight();
-		//				if (light != null)
-		//					rainingFireProjectile.missile.Entity.RemoveComponent(light);
-						
-		//				projectiles.Remove(rainingFireProjectile);
-		//			}
-		//		}
-		//		sl.Exit();
-		//	}
-		//}
+			foreach (KeyValuePair<Agent, RainingFireObject> keyValuePair in burningObjects)
+            {
+				Agent key = keyValuePair.Key;
+				RainingFireObject value = keyValuePair.Value;
+				
+				if (key.IsActive())
+				{
+					if (value.damagecount > 0)
+					{
+						if (value.burningtime.Check(true))
+						{
+							Blow blow = CreateBurningBlow(value.attackerAgent, key);
+							key.RegisterBlow(blow);
+							value.damagecount--;
+							if (value.attackerAgent == Agent.Main)
+								InformationManager.DisplayMessage(new InformationMessage("getting burning damage " + blow.InflictedDamage));
 
-		public bool GetRainingFireAvailable()
+							if (key == Agent.Main)
+								InformationManager.DisplayMessage(new InformationMessage("receiving burning damage " + blow.InflictedDamage));
+
+							if (value.Flame.Count == 0)
+							{
+								Skeleton attachedAgent = key.AgentVisuals.GetSkeleton();
+								MatrixFrame matrixFrame = new MatrixFrame(Mat3.Identity, new Vec3(0f, 0f, 0f, -1f));
+								for (int i = 0; i <= (int)HumanBone.HandR; i++)
+									value.Flame.Add(ParticleSystem.CreateParticleSystemAttachedToBone("psys_campfire", attachedAgent, (sbyte)i, ref matrixFrame));
+
+								int rval = attachedAgent.GetComponentCount(GameEntity.ComponentType.ParticleSystemInstanced);
+							}
+						}
+					}
+     //               else
+     //               {
+					//	Skeleton attachedAgent = key.AgentVisuals.GetSkeleton();
+					//	int rval = attachedAgent.GetComponentCount(GameEntity.ComponentType.ParticleSystemInstanced);
+					//}
+					
+				}
+				else
+					deadagents.Add(key);
+            }
+
+			if(deadagents.Count > 0)
+			{ 
+				for (int i = deadagents.Count-1; i >= 0; i--)
+				{
+					burningObjects.Remove(deadagents[i]);
+					deadagents.Remove(deadagents[i]);
+				}
+			}
+			//      SpinLock sl = new SpinLock();
+			//      bool splock = false;
+			//      RainingFireTime rainingFireTime = RainingFireTime.getInstance();
+
+			//      if (RainingFireCofiguration.rainingFireSwitch)
+			//      {
+			//          sl.Enter(ref splock);
+			//          for (int i = 0; i < projectiles.Count; i++)
+			//          {
+			//              RainingFireProjectile rainingFireProjectile = projectiles[i];
+			//              if (rainingFireProjectile.timer.Check(false))
+			//              {
+			//                  rainingFireProjectile.missile.Entity.RemoveAllParticleSystems();
+			//                  Light light = rainingFireProjectile.missile.Entity.GetLight();
+			//                  if (light != null)
+			//                      rainingFireProjectile.missile.Entity.RemoveComponent(light);
+
+			//                  projectiles.Remove(rainingFireProjectile);
+			//              }
+			//          }
+			//          sl.Exit();
+			//      }
+		}
+
+        public bool GetRainingFireAvailable()
         {
 			RainingFireTime rainingFireTime = RainingFireTime.getInstance();
 			float currentTime = Mission.Current.Scene.TimeOfDay;
@@ -136,6 +190,7 @@ namespace RainingFire
         {
 			SpinLock sl = new SpinLock();
 			bool splock = false;
+			RainingFireTime time = RainingFireTime.getInstance();
 			
 			if (GetRainingFireAvailable())
 			{
@@ -149,6 +204,33 @@ namespace RainingFire
 						missile.Entity.RemoveAllParticleSystems();
 						if (light != null)
 							missile.Entity.RemoveComponent(light);
+
+						if(attachedAgent.IsHuman && attachedBoneIndex != (int)HumanBone.Forearm1L)
+                        {
+							RainingFireObject rainingFireObject;
+							if(burningObjects.ContainsKey(attachedAgent))
+                            {
+								rainingFireObject = burningObjects[attachedAgent];
+								rainingFireObject.attackerAgent = attackerAgent;
+								if (!rainingFireObject.isBurning)
+                                {
+									rainingFireObject.isBurning = true;
+									rainingFireObject.damagecount = time.rainingfireburningtime;
+								}
+								else
+									rainingFireObject.damagecount = time.rainingfireburningtime;
+							}
+							else
+							{
+								rainingFireObject = new RainingFireObject();
+								rainingFireObject.attackerAgent = attackerAgent;
+								rainingFireObject.burningtime = new MissionTimer(time.rainingfireburningtime);
+								rainingFireObject.isBurning = true;
+								rainingFireObject.damagecount = time.rainingfireburningtime;
+								burningObjects.Add(attachedAgent, rainingFireObject);
+								
+							}
+						}
 					}
 					else
 					{
@@ -157,12 +239,13 @@ namespace RainingFire
 						ParticleSystem.CreateParticleSystemAttachedToEntity("psys_campfire", missile.Entity, ref matrixFrame);
 						if (light != null)
 						{
-							light.Intensity = 5f;
-							light.Radius = 5f;
+							light.Intensity = 1f;
+							light.Radius = 1f;
 						}
 
+						//RainingFireTime rainingFireTime = RainingFireTime.getInstance();
 						//RainingFireProjectile rainingFireProjectile = new RainingFireProjectile();
-						//rainingFireProjectile.timer = new MissionTimer((float)RainingFireTime.rainingfireburningtime);
+						//rainingFireProjectile.timer = new MissionTimer((float)rainingFireTime.rainingfireburningtime);
 						//rainingFireProjectile.missile = missile;
 						//splock = false;
 						//sl.Enter(ref splock);
@@ -173,6 +256,25 @@ namespace RainingFire
 			}
 		}
 
+		private Blow CreateBurningBlow(Agent attackerAgent, Agent attachedAgent)
+		{
+			RainingFireTime time = RainingFireTime.getInstance();
+			Blow blow = new Blow(attackerAgent.Index);
+			blow.DamageType = DamageTypes.Blunt;
+			blow.BlowFlag = BlowFlags.NoSound;
+			//blow.BlowFlag |= BlowFlags.ShrugOff;
+			blow.BoneIndex = attachedAgent.Monster.HeadLookDirectionBoneIndex;
+			blow.Position = attachedAgent.Position;
+			blow.Position.z = blow.Position.z + attachedAgent.GetEyeGlobalHeight();
+			blow.BaseMagnitude = 0f;
+			blow.InflictedDamage = time.rainingfiredamagepersec;
+			blow.SwingDirection = attachedAgent.LookDirection;
+			blow.SwingDirection.Normalize();
+			blow.Direction = blow.SwingDirection;
+			blow.DamageCalculated = true;
+			return blow;
+		}
 		//private List<RainingFireProjectile> projectiles = new List<RainingFireProjectile>();
-    }
+		private Dictionary<Agent, RainingFireObject> burningObjects = new Dictionary<Agent, RainingFireObject>();
+	}
 }

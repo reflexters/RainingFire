@@ -20,6 +20,7 @@ namespace RainingFire
             fireTime.rainingfirestarttime = (int)jsondata["rainingfirestarttime"] - 1;
             fireTime.rainingfireendtime = (int)jsondata["rainingfireendtime"] - 1;
             fireTime.rainingfireburningtime = (int)jsondata["rainingfireburningtime"];
+            fireTime.rainingfiredamagepersec = (int)jsondata["rainingfiredamagepersec"];
 
             JArray battletype = (JArray)jsondata["rainingfirebattletype"];
             foreach(JObject array in battletype.Children())

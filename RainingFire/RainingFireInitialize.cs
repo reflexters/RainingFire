@@ -18,7 +18,7 @@ namespace RainingFire
         {
             base.OnMissionBehaviourInitialize(mission);
             mission.AddMissionBehaviour(new RainingFireAttachFire());
-            
+            mission.AddMissionBehaviour(new RainingFireBurning());
         }
 
         public void ModInitialize()

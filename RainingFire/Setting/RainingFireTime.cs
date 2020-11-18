@@ -41,6 +41,7 @@ namespace RainingFire
         public int rainingfirestarttime;
         public int rainingfireendtime;
         public int rainingfireburningtime;
+        public int rainingfiredamagepersec;
 
         private static RainingFireTime instance;
     }
