@@ -6,7 +6,7 @@ using TaleWorlds.Library;
 
 namespace RainingFire
 {
-    class RainingFireCofiguration
+    class RainingFireConfiguration
     {
         public void parsingJSON()
         {
@@ -16,7 +16,8 @@ namespace RainingFire
             RainingFireTime fireTime = RainingFireTime.getInstance();
             RainingFireBattle battle = RainingFireBattle.getInstance();
 
-            RainingFireCofiguration.rainingFireSwitch = (bool)jsondata["rainingfireswitch"];
+            RainingFireConfiguration.rainingFireSwitch = (bool)jsondata["rainingfireswitch"];
+            RainingFireConfiguration.rainingFireBurningdamage = (bool)jsondata["rainingfireburningdamage"];
             fireTime.rainingfirestarttime = (int)jsondata["rainingfirestarttime"] - 1;
             fireTime.rainingfireendtime = (int)jsondata["rainingfireendtime"] - 1;
             fireTime.rainingfireburningtime = (int)jsondata["rainingfireburningtime"];
@@ -85,5 +86,6 @@ namespace RainingFire
         }
 
         public static bool rainingFireSwitch { get; set; }
+        public static bool rainingFireBurningdamage { get; set; }
     }
 }
