@@ -54,8 +54,7 @@
   <ItemGroup>
     <Compile Include="Container\RainingFireObject.cs" />
     <Compile Include="Container\RainingFireProjectile.cs" />
-    <Compile Include="RainingFireBurning.cs" />
-    <Compile Include="RainingFireCofiguration.cs" />
+    <Compile Include="RainingFireConfiguration.cs" />
     <Compile Include="RainingFireAttachFire.cs" />
     <Compile Include="Setting\RainingFireBattle.cs" />
     <Compile Include="Setting\RainingFireWeapon.cs" />
