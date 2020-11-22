@@ -10,6 +10,7 @@ namespace RainingFire.Container
     {
         public Agent attackerAgent;
         public MissionTimer burningtime;
+        public GameEntity fireEntity;
         public List<ParticleSystem> Flame = new List<ParticleSystem>();
         public int damagecount;
         public bool isBurning = false;
