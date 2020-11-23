@@ -229,7 +229,7 @@ namespace RainingFire
 
 								if (attachedAgent.IsHuman && attachedBoneIndex != (int)HumanBone.Forearm1L && RainingFireConfiguration.rainingFireBurningdamage)
 								{
-									if (shootingWeapon.ContainsKey(attackerAgent))
+									if (shootingWeapon.ContainsKey(attackerAgent) && attackerAgent.Equipment[shootingWeapon[attackerAgent]].CurrentUsageItem != null)
 									{
 										WeaponClass weapon = attackerAgent.Equipment[shootingWeapon[attackerAgent]].CurrentUsageItem.WeaponClass;
 										if (rainingFireWeapon.rainingfireCheckWeapon(weapon))
@@ -263,6 +263,10 @@ namespace RainingFire
 											}
 										}
 									}
+                                    else
+                                    {
+										shootingWeapon.Remove(attackerAgent);
+                                    }
 								}
 							}
 							else
