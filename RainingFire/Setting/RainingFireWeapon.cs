@@ -22,10 +22,12 @@ namespace RainingFire.Setting
             bool rval = false;
             switch (weapon)
             {
+                case WeaponClass.Arrow:
                 case WeaponClass.Bow:
                     if (this.Arrow)
                         rval = true;
                     break;
+                case WeaponClass.Bolt:
                 case WeaponClass.Crossbow:
                     if (this.Bolt)
                         rval = true;
